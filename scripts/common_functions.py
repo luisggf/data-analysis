@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import tldextract
 from newspaper import Article
+from decouple import config
 import ast
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ from retrying import retry
 from unshortenit import UnshortenIt
 import urllib
 import time
+
 
 def get_protocol(url, proxy=None):
     try:
@@ -73,6 +75,7 @@ def get_url(text):
             pass
     return list_url_decodified
 
+
 def extract_attribute(json_str, attribute):
     json_str = json_str.replace("'", "\"").replace("\n", "").replace("\r", "")
     try:
@@ -82,6 +85,7 @@ def extract_attribute(json_str, attribute):
     except json.JSONDecodeError:
         return None
     return None
+
 
 def get_trusted_domains():
     trusted_domains = [
@@ -186,11 +190,12 @@ def get_trusted_domains():
         'bbc.com',
         'reuters',
         'intercept'
-        'cnnbrasil', 
+        'cnnbrasil',
         'cnnportugal.iol'
 
     ]
     return trusted_domains
+
 
 def get_news_domains():
     news_domains = ["globo",
@@ -265,69 +270,71 @@ def get_news_domains():
                     ]
     return news_domains
 
+
 def not_certified_news():
-    uncertified = ['jornaldacidadeonline', 
-                   'folhadestra', 
-                   'revistaoeste', 
-                   'pleno', 
+    uncertified = ['jornaldacidadeonline',
+                   'folhadestra',
+                   'revistaoeste',
+                   'pleno',
                    'sapo',
-                    'expresso', 
-                    'change', 
-                   'diariodocentrodomundo', 
-                   'sputniknewsbrasil', 
-                   'dw.com', 
-                   'caldeiraopolitico', 
-                   'apostagem', 
-                   'saibamais', 
-                   'horabrasilia', 
-                   'nsctotal', 
-                   'diariodopoder', 
-                   'aliadosbrasiloficial', 
+                   'expresso',
+                   'change',
+                   'diariodocentrodomundo',
+                   'sputniknewsbrasil',
+                   'dw.com',
+                   'caldeiraopolitico',
+                   'apostagem',
+                   'saibamais',
+                   'horabrasilia',
+                   'nsctotal',
+                   'diariodopoder',
+                   'aliadosbrasiloficial',
                    'contrafatos',
-                    'r7', 
-                    'sbtnews', 
-                    'terra', 
-                    'noticiasaominuto',
-                    'apublica', 
-                    'istoe', 
-                    'plantaobrasil', 
-                    'redebrasilatual', 
-                    'cartacapital', 
-                    'conjur', 
-                    'clicrbs', 
-                    'revistaforum', 
-                    'metropoles', 
-                    'antenapoliticabr', 
-                    'portaltocanews', 
-                    'yahoo', 
-                    'atrombetanews', 
-                    'brasilsemmedo', 
-                    'jornalggn', 
-                    'tvi.iol', 
-                    'brasil247', 
-                    'msn', 
-                    'terrabrasilnoticias', 
-                    'agoranoticiasbrasil', 
-                    'conexaopoliticavistapatria', 
-                    'dunapress', 
-                    'exame', 
-                    'atardeacidadeon', 
-                    'correiobraziliense',
-                    'jovempan', 
-                    'poder360', 
-                    'abril', 
-                    'ebc', 
-                    'wordpress', 
-                    'gazetabrasil', 
-                    'brasildefato', 
-                    'aosfatos'
-                    ]
+                   'r7',
+                   'sbtnews',
+                   'terra',
+                   'noticiasaominuto',
+                   'apublica',
+                   'istoe',
+                   'plantaobrasil',
+                   'redebrasilatual',
+                   'cartacapital',
+                   'conjur',
+                   'clicrbs',
+                   'revistaforum',
+                   'metropoles',
+                   'antenapoliticabr',
+                   'portaltocanews',
+                   'yahoo',
+                   'atrombetanews',
+                   'brasilsemmedo',
+                   'jornalggn',
+                   'tvi.iol',
+                   'brasil247',
+                   'msn',
+                   'terrabrasilnoticias',
+                   'agoranoticiasbrasil',
+                   'conexaopoliticavistapatria',
+                   'dunapress',
+                   'exame',
+                   'atardeacidadeon',
+                   'correiobraziliense',
+                   'jovempan',
+                   'poder360',
+                   'abril',
+                   'ebc',
+                   'wordpress',
+                   'gazetabrasil',
+                   'brasildefato',
+                   'aosfatos'
+                   ]
     return uncertified
+
 
 def classify_url(url):
     anj_domains = get_trusted_domains()
     uncertified_news = not_certified_news()
-    
+
     if isinstance(url, str):
         cleaned_url = url.strip("[]'").replace('"', '')
         if cleaned_url:
@@ -337,8 +344,9 @@ def classify_url(url):
                 return 'Certified'
             elif any(domain in uncertified_domains for uncertified_domains in uncertified_news):
                 return 'Uncertified'
-        return 
+        return
     return
+
 
 def get_scrap(urls):
     print(urls)
@@ -347,7 +355,7 @@ def get_scrap(urls):
     except (SyntaxError, ValueError):
         print("Erro ao avaliar as URLs:", urls)
         return None
-    
+
     df_list = []
 
     for url in urls:
@@ -361,7 +369,7 @@ def get_scrap(urls):
             artigo.download()
             artigo.parse()
             artigo.nlp()
-            
+
             palavras_chave = artigo.keywords
             resumo = artigo.summary.replace("\n", "").replace("|", "")
             titulo = artigo.title.replace("\n", "").replace("|", "")
@@ -388,8 +396,9 @@ def get_scrap(urls):
     else:
         return None
 
+
 def get_webpage(urls):
-    
+
     urls = ast.literal_eval(urls)
     for url in urls:
         if not url:
@@ -412,8 +421,9 @@ def get_webpage(urls):
             print("Couldnt save webpage!")
             continue
 
+
 def analyze_comment(comment_text):
-    api_key = 'AIzaSyD507HsJSbIaGrpUHGZ4eo4fBoQRck_fYA'
+    api_key = config('API_PERSPECTIVE')
     time.sleep(1)
     print(comment_text)
     url = f'https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={api_key}'
@@ -441,14 +451,14 @@ def analyze_comment(comment_text):
     except:
         print(f"A requisição falhou.")
         return 1.0
-    
+
+
 def extract_domain(url):
     extracted = tldextract.extract(url)
     return extracted.domain + '.' + extracted.suffix
+
 
 def extract_sentiment_attributes(sentiment_score, attribute):
     sentiment_dict = eval(sentiment_score)
     x = sentiment_dict.get(attribute, -2.0)
     return x
-
-

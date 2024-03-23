@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import tldextract
 from newspaper import Article
+from decouple import config
 import ast
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1026,7 +1027,7 @@ df.to_csv('nome_qualquer.csv', index=False)
 
 # COMO PERSPECTIVE FOI ATRIBUIDA AO TITULO
 def analyze_comment(comment_text):
-    api_key = 'AIzaSyB65GkrlS0s2Rc04lCZ0vuURiYfuWgZWfQ'
+    api_key = config('API_PERSPECTIVE')
     time.sleep(1)
     print(comment_text)
     url = f'https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={api_key}'
