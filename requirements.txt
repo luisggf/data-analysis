@@ -1,0 +1,16 @@
+pandas
+tldextract
+newspaper3k
+ast
+numpy
+matplotlib
+pywebcopy
+urllib
+re
+requests
+urlextract
+retrying
+unshortenit
+time
+openai
+python-decouple
